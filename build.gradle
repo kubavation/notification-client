@@ -1,10 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.api.publish.maven.MavenPublication
 
 plugins {
 	id 'org.springframework.boot' version '3.1.1'
 	id 'io.spring.dependency-management' version '1.1.0'
 	id 'org.jetbrains.kotlin.jvm' version '1.8.22'
 	id 'org.jetbrains.kotlin.plugin.spring' version '1.8.22'
+	id 'maven-publish'
 }
 
 group = 'com.durys.jakub'
@@ -21,6 +23,8 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
@@ -28,6 +32,26 @@ tasks.withType(KotlinCompile) {
 	kotlinOptions {
 		freeCompilerArgs += '-Xjsr305=strict'
 		jvmTarget = '17'
+	}
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			groupId = 'com.durys.jakub'
+			artifactId = 'notification-client'
+			version = '0.1-SNAPSHOT'
+			from components.java
+		}
+	}
+	repositories {
+		maven {
+			credentials {
+				username = spaceUsername
+				password = spacePassword
+			}
+			url = "https://maven.pkg.jetbrains.space/company-management/p/main/notification-client"
+		}
 	}
 }
 
